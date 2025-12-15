@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vexl Converter - Cryptocurrency Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .converter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .convert-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .result.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .result h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .result p {
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .result .amount {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .swap-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .swap-btn:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Vexl Converter</h1>
+            <p>Convert cryptocurrencies instantly</p>
+        </div>
+
+        <form class="converter-form" id="converterForm">
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" step="0.00000001" min="0" placeholder="Enter amount" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fromCurrency">From</label>
+                    <select id="fromCurrency" required>
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                        <option value="LTC">Litecoin (LTC)</option>
+                        <option value="XMR">Monero (XMR)</option>
+                    </select>
+                </div>
+
+                <button type="button" class="swap-btn" id="swapBtn">⇅</button>
+
+                <div class="form-group">
+                    <label for="toCurrency">To</label>
+                    <select id="toCurrency" required>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="USD">US Dollar (USD)</option>
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="convert-btn" id="convertBtn">
+                Convert Currency
+            </button>
+        </form>
+
+        <div class="result" id="result">
+            <h3 id="resultTitle">Conversion Result</h3>
+            <p id="resultAmount"></p>
+            <p id="resultRate"></p>
+            <p id="resultTime"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('converterForm');
+            const convertBtn = document.getElementById('convertBtn');
+            const result = document.getElementById('result');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultAmount = document.getElementById('resultAmount');
+            const resultRate = document.getElementById('resultRate');
+            const resultTime = document.getElementById('resultTime');
+            const swapBtn = document.getElementById('swapBtn');
+
+            // Swap currencies
+            swapBtn.addEventListener('click', function() {
+                const fromSelect = document.getElementById('fromCurrency');
+                const toSelect = document.getElementById('toCurrency');
+
+                const tempValue = fromSelect.value;
+                const tempText = fromSelect.options[fromSelect.selectedIndex].text;
+
+                fromSelect.value = toSelect.value;
+                toSelect.value = tempValue;
+
+                // Update the text as well
+                const fromOption = Array.from(fromSelect.options).find(opt => opt.value === toSelect.value);
+                const toOption = Array.from(toSelect.options).find(opt => opt.value === fromSelect.value);
+
+                if (fromOption && toOption) {
+                    fromSelect.options[fromSelect.selectedIndex].text = toOption.text;
+                    toSelect.options[toSelect.selectedIndex].text = fromOption.text;
+                }
+            });
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const amount = document.getElementById('amount').value;
+                const fromCurrency = document.getElementById('fromCurrency').value;
+                const toCurrency = document.getElementById('toCurrency').value;
+
+                if (!amount || !fromCurrency || !toCurrency) {
+                    showResult('Error', 'Please fill in all fields', '', '', 'error');
+                    return;
+                }
+
+                // Show loading state
+                convertBtn.disabled = true;
+                convertBtn.innerHTML = 'Converting... <div class="loading"></div>';
+
+                try {
+                    const response = await fetch('/api/convert', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            amount: parseFloat(amount),
+                            fromCurrency: fromCurrency,
+                            toCurrency: toCurrency
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showResult(
+                            'Conversion Successful',
+                            `Converted Amount: <span class="amount">${data.convertedAmount.toFixed(8)} ${data.toCurrency}</span>`,
+                            `Exchange Rate: 1 ${data.fromCurrency} = ${data.exchangeRate.toFixed(2)} ${data.toCurrency}`,
+                            `Original Amount: ${data.originalAmount} ${data.fromCurrency}`,
+                            'success'
+                        );
+                    } else {
+                        showResult('Conversion Failed', data.error, '', '', 'error');
+                    }
+
+                } catch (error) {
+                    showResult('Error', 'Failed to connect to conversion service', '', '', 'error');
+                    console.error('Conversion error:', error);
+                } finally {
+                    convertBtn.disabled = false;
+                    convertBtn.innerHTML = 'Convert Currency';
+                }
+            });
+
+            function showResult(title, amount, rate, time, type) {
+                resultTitle.textContent = title;
+                resultAmount.innerHTML = amount;
+                resultRate.textContent = rate;
+                resultTime.textContent = time;
+
+                result.className = 'result show ' + type;
+            }
+        });
+    </script>
+</body>
+</html>
