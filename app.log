@@ -1,0 +1,45 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.example:demo1:jar:0.1
+[WARNING] 'dependencyManagement.dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: com.vladsch.flexmark:flexmark-html2md-converter:jar -> version ${html2md.converter.version} vs ${flexmark.version} @ io.micronaut.platform:micronaut-platform:4.10.4, /Users/accountname/.m2/repository/io/micronaut/platform/micronaut-platform/4.10.4/micronaut-platform-4.10.4.pom, line 3131, column 19
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] -------------------------< com.example:demo1 >--------------------------
+[INFO] Building demo1 0.1
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> mn:4.11.4:run (default-cli) > process-classes @ demo1 >>>
+[INFO] 
+[INFO] --- enforcer:3.6.2:enforce (micronaut-enforce) @ demo1 ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: io.micronaut.maven.enforcer.CheckSnakeYaml passed
+[INFO] 
+[INFO] --- mn:4.11.4:generate-import-factory (default-generate-import-factory) @ demo1 ---
+[INFO] 
+[INFO] --- mn:4.11.4:generate-openapi-generic (default-generate-openapi-generic) @ demo1 ---
+[INFO] 
+[INFO] --- mn:4.11.4:generate-openapi-client (default-generate-openapi-client) @ demo1 ---
+[INFO] 
+[INFO] --- mn:4.11.4:generate-openapi-server (default-generate-openapi-server) @ demo1 ---
+[INFO] 
+[INFO] --- mn:4.11.4:generate-jsonschema (default-generate-jsonschema) @ demo1 ---
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ demo1 ---
+[INFO] Copying 3 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ demo1 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 6 source files with javac [debug parameters release 21] to target/classes
+[INFO] /Users/accountname/Desktop/Projects/demo1/src/main/java/com/example/service/CryptoConversionService.java: /Users/accountname/Desktop/Projects/demo1/src/main/java/com/example/service/CryptoConversionService.java uses unchecked or unsafe operations.
+[INFO] /Users/accountname/Desktop/Projects/demo1/src/main/java/com/example/service/CryptoConversionService.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] <<< mn:4.11.4:run (default-cli) < process-classes @ demo1 <<<
+[INFO] 
+[INFO] 
+[INFO] --- mn:4.11.4:run (default-cli) @ demo1 ---
+[INFO] 👀 Watching for changes in [src/main/java, src/main/resources]
