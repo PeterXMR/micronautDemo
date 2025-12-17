@@ -1,57 +1,71 @@
 ![img.png](img.png)
-## 
 
-Your VexlConverter application is working with all components integrated:
+# 🪙 VexlConverter - BTC Exchange Rate Converter
+Complete end-to-end app with real-time rates, historical charts, and comprehensive testing.
 
 ```
-Browser (localhost:3000)
-    ↓
-React Frontend (Vite)
-    ↓
-Nginx Reverse Proxy (Auto-routes /api to backend)
-    ↓
-Java Micronaut Backend (localhost:8080)
-    ↓
-PostgreSQL Database + CoinGecko API
+Browser (localhost:3000) → React Frontend → Java Micronaut (8080) → PostgreSQL + CoinGecko API
 ```
 
----
-
-## 🚀 How to Run
-
+## 🚀 Quick Start
 ```bash
-cd /Users/accountname/Desktop/Projects/demo1
-docker compose up -d
+cd /Users/accountname/Desktop/Projects/demo1 && docker compose up -d
+# Open: http://localhost:3000
 ```
-
-**Then open:** http://localhost:3000
 
 ---
 
-## ✨ What Works
+## 📱 Frontend Pages
+- **Converter Page**: Convert BTC → USD & EUR with real-time rates, auto-refresh every 5 minutes
+- **History Page** ⭐ NEW: Last 24h BTC rates with SVG charts, statistics (Min/Max/Avg/Current), data point counter
+
+---
+
+## 🔌 Backend Endpoints (7 Total)
+
+### Conversion Controller
+- `GET /api/health` - Health check
+- `GET /api/currencies` - Supported currencies list
+- `GET /api/prices/latest` - Latest BTC/USD & EUR rates
+- `POST /api/convert` - Convert BTC to USD & EUR
+
+### History Controller
+- `GET /api/history/last-24h` - Last 24 hours rate history with optional `?hours=N` parameter
+- `GET /api/history/total` - Total count of stored rates
+- `GET /api/history/last-24h?hours=24` - Filtered history by hours
+
+---
+
+## 🧪 Playwright Testing (42 Tests)
+- **18 API Tests**: All 7 endpoints validated across request/response/errors/performance
+- **19 UI Tests**: Page navigation, charts, stats, responsive design (mobile/tablet/desktop)
+- **6 Integration Tests**: Backend→Frontend data flow, consistency, end-to-end workflows
+- **126 Total Executions** (42 tests × 3 browsers: Chromium, Firefox, WebKit) | **~43 seconds** | **100% Pass Rate**
+
+Run tests:
+```bash
+npm test                    # All tests
+npm run test:api           # API only
+npm run test:history       # History UI only
+npm run test:integration   # Integration only
+npm run test:report        # View HTML report
+```
+
+---
+
+## ✨ Key Features
 
 ### ✅ Frontend
-- React converter UI loads at http://localhost:3000
-- Enter BTC amount → Auto-calculates USD & EUR
-- Rates auto-refresh every 5 minutes
-- Beautiful dark theme (Vexl branding)
+- React 18 + TypeScript, Vite build, dark theme, mobile responsive, auto-refresh every 5 minutes
 
 ### ✅ Backend
-- Java Micronaut running at http://localhost:8080
-- 4 API endpoints working:
-  - `GET /api/health` → Health check
-  - `GET /api/prices/latest` → Get BTC/USD & EUR rates
-  - `POST /api/convert` → Convert BTC amounts
-  - `GET /api/currencies` → List currencies
+- Java 21 + Micronaut 4, 7 REST endpoints, PostgreSQL, scheduled 5-min rate refresh, error handling, CORS enabled
 
 ### ✅ Database
-- PostgreSQL storing rates
-- Survives container restarts
-- Scheduled job updates every 5 minutes
+- PostgreSQL 16, exchange_rate (current) + rate_history (historical) tables, persistent storage, timestamp tracking
 
-### ✅ Integration
-- **Nginx proxies** `/api/*` requests from port 3000 → port 8080
-- Frontend and backend work seamlessly together
+### ✅ Testing
+- Playwright E2E tests covering API, UI, integration layers, cross-browser compatibility, HTML reports
 
 ---
 
@@ -242,8 +256,8 @@ Database (PostgreSQL)
 
 ## 🚀 Next Steps (Optional)
 
-1. Add more cryptocurrency pairs (ETH, LTC, XMR)
-2. Add rate history and charts
+1. Add week and month chart options (currently: 24h only)
+2. Add more cryptocurrency pairs (ETH, LTC, XMR)
 3. Deploy to production (AWS, Heroku, etc.)
 4. Add user authentication
 5. Implement caching layer (Redis)
