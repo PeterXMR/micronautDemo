@@ -86,11 +86,10 @@ public class RateService {
             if (response.containsKey("bitcoin")) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> bitcoinData = (Map<String, Object>) response.get("bitcoin");
-                Map<String, Double> rates = Map.of(
+                return Map.of(
                     "usd", ((Number) bitcoinData.get("usd")).doubleValue(),
                     "eur", ((Number) bitcoinData.get("eur")).doubleValue()
                 );
-                return rates;
             }
         } catch (Exception e) {
             LOG.error("Failed to fetch BTC prices from CoinGecko", e);
@@ -102,53 +101,30 @@ public class RateService {
      * Upsert a rate into database.
      * Deletes existing and inserts new to avoid detached entity issues.
      */
-    public ExchangeRate upsertRate(String from, String to, double rate) {
+    public void upsertRate(String from, String to, double rate) {
         String fromUpper = from.toUpperCase();
         String toUpper = to.toUpperCase();
         // Delete existing to avoid detached entity issues
         repository.findByFromCurrencyAndToCurrency(fromUpper, toUpper).ifPresent(repository::delete);
         // Create and save new entity
         ExchangeRate entity = new ExchangeRate(fromUpper, toUpper, rate, Instant.now());
-        return repository.save(entity);
+        repository.save(entity);
     }
 
+
     /**
-     * Convert BTC amount to target currency using latest stored rate.
-     * Mimics Python: btc_amount * rate
+     * Get current BTC rates (USD and EUR) from database as a map
      */
-    public Optional<Map<String, Object>> convertBtc(double btcAmount, String toCurrency) {
-        if (btcAmount <= 0) {
-            return Optional.empty();
+    public Optional<Map<String, Double>> getCurrentRates() {
+        Optional<ExchangeRate> usd = getLatestPrice();
+        Optional<ExchangeRate> eur = getLatestPriceEur();
+
+        if (usd.isPresent() && eur.isPresent()) {
+            return Optional.of(Map.of(
+                "usd", usd.get().getRate(),
+                "eur", eur.get().getRate()
+            ));
         }
-
-        try {
-            String toUpper = toCurrency.toUpperCase();
-            Optional<ExchangeRate> rateOpt = repository.findByFromCurrencyAndToCurrency("BTC", toUpper);
-
-            if (rateOpt.isEmpty()) {
-                // Try to fetch fresh rate if not in DB
-                LOG.warn("No cached rate for BTC/{}, fetching fresh", toUpper);
-                fetchAndStorePrices();
-                rateOpt = repository.findByFromCurrencyAndToCurrency("BTC", toUpper);
-            }
-
-            if (rateOpt.isPresent()) {
-                ExchangeRate rate = rateOpt.get();
-                double convertedAmount = btcAmount * rate.getRate();
-
-                // Build response matching Python API format
-                Map<String, Object> result = Map.ofEntries(
-                    Map.entry("btc_amount", btcAmount),
-                    Map.entry(toUpper.toLowerCase() + "_amount", Math.round(convertedAmount * 100.0) / 100.0),
-                    Map.entry("rates", Map.of("btc_" + toUpper.toLowerCase(), rate.getRate())),
-                    Map.entry("timestamp", rate.getUpdatedAt().toString())
-                );
-                return Optional.of(result);
-            }
-        } catch (Exception e) {
-            LOG.error("Conversion failed for {} {}", btcAmount, toCurrency, e);
-        }
-
         return Optional.empty();
     }
 }

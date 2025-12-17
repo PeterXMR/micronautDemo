@@ -7,16 +7,26 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "build:copy": "vite build && rm -rf ../src/main/resources/public && mkdir -p ../src/main/resources/public && cp -R dist/* ../src/main/resources/public/"
+    "build:copy": "vite build && rm -rf ../src/main/resources/public && mkdir -p ../src/main/resources/public && cp -R dist/* ../src/main/resources/public/",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "test:api": "playwright test tests/e2e/api.spec.ts",
+    "test:history": "playwright test tests/e2e/history.spec.ts",
+    "test:integration": "playwright test tests/e2e/data-integration.spec.ts"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.0",
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.3",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.0",
     "typescript": "^5.6.3",
     "vite": "^5.0.8"
   }

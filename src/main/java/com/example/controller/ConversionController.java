@@ -25,6 +25,7 @@ public class ConversionController {
     @Inject
     private RateService rateService;
 
+
     @Get("/health")
     public Map<String, String> health() {
         return Map.of("status", "healthy", "version", "0.0.1");
